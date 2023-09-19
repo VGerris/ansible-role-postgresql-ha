@@ -46,7 +46,7 @@ You can take a look at [prepare.yml](molecule/default/prepare.yml) to check out 
 Shell
 ```bash
 ansible-galaxy collection install community.crypto
-ansible-galaxy install fidanf.postgresql_ha
+ansible-galaxy install fidanf.postgresql_ha # not this repo
 ```
 
 Requirements file

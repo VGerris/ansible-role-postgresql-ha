@@ -18,7 +18,7 @@
         update_cache: yes
 
     - name: Use python3 by default
-      community.general.system.alternatives: 
+      community.general.alternatives: 
         path: /usr/bin/python3
         link: /usr/bin/python
         name: python
@@ -28,10 +28,10 @@
       ansible.builtin.lineinfile: 
         path: /etc/hosts 
         regexp: '.*{{ item }}$'
-        line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ item }}"
+        line: "{{ hostvars[item].ansible_host }} {{ item }}"
         state: present
         mode: 0644
-      when: hostvars[item].ansible_eth1.ipv4.address is defined
+      when: hostvars[item].ansible_host is defined
       loop: "{{ groups[repmgr_target_group] }}"
 
     - name: Install acl package

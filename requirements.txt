@@ -6,3 +6,4 @@ cryptography>=3.0
 yamllint
 python-vagrant
 pyOpenSSL
+resolvelib==0.5.4

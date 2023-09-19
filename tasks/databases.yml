@@ -3,6 +3,7 @@
   ansible.builtin.shell: 
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} status
     executable: /bin/bash
+  become: yes
   become_user: "{{ postgresql_service_user }}"
 
 - name: PostgreSQL | Make sure the PostgreSQL databases are present

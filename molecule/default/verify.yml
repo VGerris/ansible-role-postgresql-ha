@@ -28,21 +28,21 @@
         cmd: repmgr standby switchover --siblings-follow --dry-run
         executable: /bin/bash
       become_user: "{{ postgresql_service_user }}"
-      when: ansible_hostname == 'pgsql02'
+      when: inventory_hostname == 'pgsql02'
       register: repmgr_switchover_check
 
     - name: Print result
       ansible.builtin.debug:
         msg:
           "repmgr_switchover_check": "{{ repmgr_switchover_check.stdout_lines }}"
-      when: ansible_hostname == 'pgsql02'
+      when: inventory_hostname == 'pgsql02'
 
     - name: Perform actual manual switchover
       ansible.builtin.shell:
         cmd: repmgr standby switchover --siblings-follow
         executable: /bin/bash
       become_user: "{{ postgresql_service_user }}"
-      when: ansible_hostname == 'pgsql02'
+      when: inventory_hostname == 'pgsql02'
 
     - name: Wait for pgsql service
       ansible.builtin.wait_for:
