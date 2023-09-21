@@ -133,10 +133,11 @@
   when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Ensure postgresql slave is running after clone
-  ansible.builtin.shell: 
-    cmd: sudo systemctl start postgresql.service
+  ansible.builtin.shell:
+    cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
   become: yes
+  become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Wait for Postgres
