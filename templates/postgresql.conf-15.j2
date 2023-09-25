@@ -563,6 +563,10 @@ log_temp_files = {{ postgresql_log_temp_files }}			# log temporary files equal o
 					# than the specified size in kilobytes;
 					# -1 disables, 0 logs all temp files
 log_timezone = '{{ postgresql_log_timezone }}'
+log_recovery_conflict_waits = {{ postgresql_log_recovery_conflict_waits }}	# Controls whether a log message is produced 
+					# when the startup process waits longer than deadlock_timeout for recovery conflicts. 
+					# This is useful in determining if recovery conflicts prevent the recovery from applying WAL.
+					# The default is off. This parameter can only be set in the postgresql.conf file or on the server command line.
 
 #------------------------------------------------------------------------------
 # PROCESS TITLE
@@ -584,8 +588,6 @@ track_counts = {{ 'on' if postgresql_track_counts else 'off' }}
 track_io_timing = {{ 'on' if postgresql_track_io_timing else 'off' }}
 track_functions = {{ postgresql_track_functions }}			# none, pl, all
 track_activity_query_size = {{ postgresql_track_activity_query_size }}	# (change requires restart)
-stats_temp_directory = '{{ postgresql_stats_temp_directory }}'
-
 
 # - Monitoring -
 

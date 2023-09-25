@@ -19,6 +19,7 @@
         # postgresql_wal_receiver_create_temp_slot: off # create temp slot if primary_slot_name is not set
         # postgresql_enable_incremental_sort:        on    # (>= 13)
         # postgresql_log_min_duration_sample:    -1       # (>= 13)
+        # postgresql_stats_temp_directory: "pg_stat_tmp" # (<= 13)
         repmgr_target_group: pgcluster
         repmgr_master: pgsql01
         repmgr_failover: automatic
@@ -50,6 +51,7 @@
         postgresql_log_connections: on
         postgresql_log_disconnections: on
         postgresql_log_temp_files: 0
+        postgresql_log_recovery_conflict_waits: off # (>= 14)
         # pg_hba.conf
         postgresql_pg_hba_custom:
           - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "md5" }
