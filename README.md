@@ -174,6 +174,20 @@ ansible pgcluster -b --become-user postgres -m shell -a "repmgr cluster show"
 ansible pgcluster -b --become-user postgres -m shell -a "repmgr node status"
 ```
 
+### Re-register the standby node if it is not following properly
+For example when cluster status shows :
+```bash
+WARNING: following issues were detected
+  - node "pgsql02" (ID: 2) is not attached to its upstream node "pgsql01" (ID: 1)
+```
+On the standby node (pgslq02 by default), as postgres user
+```bash
+pg_ctlcluster 15 main stop
+repmgr -F -h pgsql01 -U repmgr -d repmgr standby clone
+pg_ctlcluster 15 main start
+repmgr standby register -F
+```
+
 ### Register (clone) an additionnal standby node 
 
 ```bash
@@ -193,8 +207,16 @@ postgres@pgsql01:~$ repmgr standby register --force
 Or you may use the repmgr node rejoin with [pg_rewind](https://repmgr.org/docs/current/repmgr-node-rejoin.html#REPMGR-NODE-REJOIN-PG-REWIND) 
 
 ```bash
-repmgr node rejoin -d repmgr -U repmgr -h pgsql02 --verbose --force-rewind=/usr/lib/postgresql/13/bin/pg_rewind
+repmgr node rejoin -d repmgr -U repmgr -h pgsql02 --verbose --force-rewind=/usr/lib/postgresql/<db_ver>/bin/pg_rewind
 ```
+or from the ansible host:
+```bash
+ansible pgsql01 -b --become-user postgres -m shell -a "repmgr node rejoin -d repmgr -U repmgr -h pgsql02 --verbose --force-rewind" -i inventory.yml
+# and to switch roles back:
+ansible pgsql01 -b --become-user postgres -m shell -a "repmgr standby switchover" -i inventory.yml 
+```
+
+Some more info on failover : https://www.repmgr.org/docs/4.0/promoting-standby.html
 
 ## License
 
