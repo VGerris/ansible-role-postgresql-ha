@@ -10,11 +10,15 @@ pgcluster:
     pgsql01:
       ansible_host: host1_replace 
       repmgr_node_id: 1 
-      repmgr_priority: 1
+      repmgr_priority: 3
     pgsql02:   
       ansible_host: host2_replace
       repmgr_node_id: 2
       repmgr_priority: 2
+    pgsql03:
+      ansible_host: host3_replace
+      repmgr_node_id: 3
+      repmgr_priority: 1
   vars:
     # Required configuration items
     postgresql_hash_mem_multiplier: 1.0
