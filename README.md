@@ -198,9 +198,9 @@ ansible-playbook myplaybook.yml -l 'pgsql04' -e 'repmgr_primary_hostname=pgsql01
 ## Register former primary as a standby node after automatic failover
 
 ```
-postgres@pgsql01:~$ pg_ctlcluster 13 main stop
+postgres@pgsql01:~$ pg_ctlcluster 15 main stop
 postgres@pgsql01:~$ repmgr standby clone --force -h pgsql02 -U repmgr -d repmgr
-postgres@pgsql01:~$ pg_ctlcluster 13 main start
+postgres@pgsql01:~$ pg_ctlcluster 15 main start
 postgres@pgsql01:~$ repmgr standby register --force
 ```
 
@@ -216,7 +216,10 @@ ansible pgsql01 -b --become-user postgres -m shell -a "repmgr node rejoin -d rep
 ansible pgsql01 -b --become-user postgres -m shell -a "repmgr standby switchover" -i inventory.yml 
 ```
 
-Some more info on failover : https://www.repmgr.org/docs/4.0/promoting-standby.html
+Some more info on failover :
+
+  - https://www.repmgr.org/docs/5.3/repmgrd-demonstration.html
+  - https://www.repmgr.org/docs/5.3/promoting-standby.html 
 
 ## License
 

@@ -32,7 +32,7 @@ pgcluster:
     postgresql_wal_level: "replica"
     postgresql_max_wal_senders: 10
     postgresql_max_replication_slots: 10
-    postgresql_wal_keep_segments: 100
+    postgresql_wal_keep_segments: 200
     postgresql_hot_standby: on
     postgresql_ext_install_repmgr: yes
     postgresql_shared_preload_libraries:
