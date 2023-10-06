@@ -64,7 +64,7 @@ repmgr_ssh_options: "-o StrictHostKeyChecking=no"
 repmgr_promote_check_timeout: 60
 repmgr_promote_check_interval: 1
 repmgr_primary_follow_timeout: 60
-repmgr_standby_follow_timeout: 30
+repmgr_standby_follow_timeout: 50
 repmgr_standby_follow_restart: "false"
 repmgr_shutdown_check_timeout: 60
 repmgr_standby_reconnect_timeout: 60
