@@ -112,6 +112,9 @@
       "repmgr_primary_hostname": "{{ repmgr_primary_hostname == inventory_hostname }}"
       "inventory_hostname": "{{ inventory_hostname }}"
 
+- name: flush # we flush here because if restart happens after this the repmgr loses the followers
+  ansible.builtin.meta: flush_handlers
+
 - name: Repmgr | Register as primary
   ansible.builtin.command: "repmgr primary register -F"
   become: yes
