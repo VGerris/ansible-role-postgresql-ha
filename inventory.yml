@@ -100,3 +100,11 @@ pgcluster:
     postgresql_data_checksums: true
     postgresql_wal_compression: on
     postgresql_wal_log_hints: on
+
+    # Barman
+    repmgr_barman_host: "192.168.56.20"
+    repmgr_barman_port: 22
+    repmgr_barman_user: barman
+    repmgr_barman_server: "bartender"
+    repmgr_barman_config: ""
+    repmgr_repmgrd_pid_file: ""
