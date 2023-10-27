@@ -171,11 +171,11 @@ passfile='{{ repmgr_passfile }}'	# path to .pgpass file to include in "primary_c
 #   rsync_options=--archive --checksum --compress --progress --rsh="ssh -o \"StrictHostKeyChecking no\""
 #   ssh_options=-o "StrictHostKeyChecking no"
 
-{{ '' if repmgr_pg_ctl_options else '#' }}pg_ctl_options='{{repmgr_pg_ctl_options}}'												# Options to append to "pg_ctl"
+{{ '' if repmgr_pg_ctl_options else '#' }}pg_ctl_options='{{repmgr_pg_ctl_options}}'							# Options to append to "pg_ctl"
 {{ '' if repmgr_pg_basebackup_options else '#' }}pg_basebackup_options='{{repmgr_pg_basebackup_options}}'		# Options to append to "pg_basebackup"
-																																																						# (Note: when cloning from Barman, repmgr will honour any
-																																																						# --waldir/--xlogdir setting present in "pg_basebackup_options"
-{{ '' if repmgr_rsync_options else '#' }}rsync_options='{{repmgr_rsync_options}}'														# Options to append to "rsync"
+					# (Note: when cloning from Barman, repmgr will honour any
+					# --waldir/--xlogdir setting present in "pg_basebackup_options"
+{{ '' if repmgr_rsync_options else '#' }}rsync_options='{{repmgr_rsync_options}}'								# Options to append to "rsync"
 ssh_options='{{repmgr_ssh_options}}'	# Options to append to "ssh"
 
 

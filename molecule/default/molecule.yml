@@ -61,7 +61,7 @@ provisioner:
   inventory:
     group_vars:
       pgcluster: 
-        postgresql_version: ${POSTGRESQL_VERSION:-"13"}
+        postgresql_version: ${POSTGRESQL_VERSION:-"15"}
         postgresql_port: 5432
         repmgr_version: ${REPMGR_VERSION:-"5.3"}
         repmgr_master: pgsql01
