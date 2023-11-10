@@ -126,16 +126,18 @@
 - name: Barman | setup SSH towards barman for repmgr with barman keys
   ansible.builtin.shell:
     cmd: |
-      cat <<EOF
       cp /home/ubuntu/id_rsa_barman.pub /var/lib/postgresql/.ssh/ && cp /home/ubuntu/id_rsa_barman /var/lib/postgresql/.ssh/
       chown -R postgres /var/lib/postgresql/.ssh/
       sudo -u postgres bash -c 'eval "$(ssh-agent -s)" && ssh-add /var/lib/postgresql/.ssh/id_rsa_barman'
       ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
       # scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub #- TODO verify if still needed
       # cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys #- TODO verify if still needed
-      sudo -u barman bash -c 'barman switch-xlog --force --archive pgsql01' # force an archive so a backup can me made
-      sudo -u barman bash -c 'barman backup pgsql01' # create a backup so repmgr can clone
-      EOF
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman cron'
+      #sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-wal --force --archive pgsql01'
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-xlog --force --archive pgsql01'
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman backup pgsql01 --wait'
+      #sudo -u barman bash -c 'barman switch-xlog --force --archive pgsql01' # force an archive so a backup can me made
+      #sudo -u barman bash -c 'barman backup pgsql01' # create a backup so repmgr can clone
     executable: /bin/bash
   become: yes
   become_user: root
@@ -143,7 +145,9 @@
 
 - name: Barman | setup known hosts to barman using postgres keys
   ansible.builtin.shell:
-    cmd: ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
+    cmd: |
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 192.168.56.10:/var/lib/postgresql/.ssh/id_rsa_barman /var/lib/postgresql/.ssh/id_rsa_barman
+      ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
     executable: /bin/bash
   become: yes
   become_user: "{{ postgresql_service_user }}"

@@ -265,7 +265,7 @@ node_rejoin_timeout={{repmgr_node_rejoin_timeout}}			# The maximum length of tim
 #------------------------------------------------------------------------------
 
 {{ '' if repmgr_barman_server else '#' }}barman_server='{{repmgr_barman_server}}'		# The barman configuration section
-{{ '' if repmgr_barman_host else '#' }}barman_host='{{repmgr_barman_host}}'			# The host name of the barman server
+{{ '' if repmgr_barman_host else '#' }}barman_host='barman@{{repmgr_barman_host}}'			# The host name of the barman server
 {{ '' if repmgr_barman_config else '#' }}barman_config='{{repmgr_barman_config}}'		# The Barman configuration file on the
 					# Barman server (needed if the file is
 					# in a non-standard location)

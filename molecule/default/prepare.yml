@@ -39,5 +39,9 @@
       loop: "{{ groups[repmgr_target_group] }}"
 
     - name: Install acl package
-      ansible.builtin.apt: 
+      ansible.builtin.apt:
         name: acl
+
+    - name: Install barman-cli package
+      ansible.builtin.apt:
+        name: barman-cli
