@@ -102,7 +102,8 @@ pgcluster:
     postgresql_wal_log_hints: on
 
     # Barman goes in /etc/repmgr.conf
-    repmgr_barman_host: "barman@192.168.56.20"
+    #repmgr_barman_host: "barman@192.168.56.20"
+    repmgr_barman_host: "192.168.56.20"
     repmgr_barman_port: 22
     repmgr_barman_user: barman
     repmgr_barman_server: "pgsql01"

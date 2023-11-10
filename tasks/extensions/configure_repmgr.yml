@@ -130,7 +130,11 @@
       cp /home/ubuntu/id_rsa_barman.pub /var/lib/postgresql/.ssh/ && cp /home/ubuntu/id_rsa_barman /var/lib/postgresql/.ssh/
       chown -R postgres /var/lib/postgresql/.ssh/
       sudo -u postgres bash -c 'eval "$(ssh-agent -s)" && ssh-add /var/lib/postgresql/.ssh/id_rsa_barman'
-      ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts && scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub && cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys
+      ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
+      # scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub #- TODO verify if still needed
+      # cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys #- TODO verify if still needed
+      sudo -u barman bash -c 'barman switch-xlog --force --archive pgsql01' # force an archive so a backup can me made
+      sudo -u barman bash -c 'barman backup pgsql01' # create a backup so repmgr can clone
       EOF
     executable: /bin/bash
   become: yes
