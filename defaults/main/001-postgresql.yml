@@ -130,7 +130,7 @@ postgresql_bonjour_name: ""  # defaults to the computer name
 # - Security and Authentication -
 
 postgresql_authentication_timeout: 60s
-postgresql_ssl: off
+postgresql_ssl: on
 postgresql_ssl_ciphers:
   - "DEFAULT"
   - "!LOW"
@@ -145,8 +145,8 @@ postgresql_ssl_dh_params_file: ""                                   # (>= 10)
 postgresql_ssl_passphrase_command: ""                               # (>= 11)
 postgresql_ssl_passphrase_command_supports_reload: off              # (>= 11)
 postgresql_ssl_renegotiation_limit: 512MB                           # amount of data between renegotiations
-postgresql_ssl_cert_file: "/etc/ssl/certs/ssl-cert-snakeoil.pem"    # (>= 9.2)
-postgresql_ssl_key_file: "/etc/ssl/private/ssl-cert-snakeoil.key"   # (>= 9.2)
+postgresql_ssl_cert_file: "/etc/pgpool2/server.cert"    # (>= 9.2)
+postgresql_ssl_key_file: "/etc/pgpool2/server.key"   # (>= 9.2)
 postgresql_ssl_ca_file: ""                                          # (>= 9.2)
 postgresql_ssl_crl_file: ""                                         # (>= 9.2)
 postgresql_password_encryption: md5                                 # on (<14) scram-sha-256  , md5
