@@ -139,6 +139,16 @@
   #ignore_errors: true
   when: postgresql_configuration_pt1.changed or postgresql_configuration_pt2.changed or postgresql_configuration_pt3.changed or postgresql_systemd_custom_conf.changed
 
+- name: PostgreSQL and Pgpool2 configure | set owner for certifcates to postgres
+  ansible.builtin.shell:
+    cmd: |
+      chown postgres /etc/pgpool2/server.key /etc/pgpool2/server.cert
+      chmod 0600 /etc/pgpool2/server.key /etc/pgpool2/server.cert
+    executable: /bin/bash
+  become: yes
+  become_user: "root"
+  ignore_errors: yes
+
 - name: PostgreSQL | Restart service
   ansible.builtin.shell: 
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop && pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
