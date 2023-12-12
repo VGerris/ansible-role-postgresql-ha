@@ -144,11 +144,11 @@
 - name: Barman | setup known hosts to barman using postgres keys
   ansible.builtin.shell:
     cmd: |
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 192.168.56.10:/var/lib/postgresql/.ssh/id_rsa_barman /var/lib/postgresql/.ssh/id_rsa_barman
-      ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
+      sudo -u postgres bash -c 'scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 192.168.56.10:/var/lib/postgresql/.ssh/id_rsa_barman /var/lib/postgresql/.ssh/id_rsa_barman'
+      sudo -u postgres bash -c 'ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts'
     executable: /bin/bash
   become: yes
-  become_user: "{{ postgresql_service_user }}"
+  become_user: root # "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Register as primary
@@ -212,6 +212,17 @@
   ansible.builtin.debug:
     msg:
       "{{ repmgrd_status.stdout_lines }}"
+
+- name: Barman | backup non-primary hosts so they are prepared at failover of primary
+  ansible.builtin.shell:
+    cmd: |
+      # sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman cron' # already started in previous step
+      sudo -u postgres bash -c "ssh barman@192.168.56.20 barman switch-xlog --force --archive {{ inventory_hostname }}" || echo "Fails if standby"
+      sudo -u postgres bash -c "ssh barman@192.168.56.20 barman backup {{ inventory_hostname }} --wait" || echo "Fails if empty"
+    executable: /bin/bash
+  become: yes
+  become_user: root # "{{ postgresql_service_user }}"
+  when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Setup cluster monitoring history cleanup with cron task
   ansible.builtin.cron:
