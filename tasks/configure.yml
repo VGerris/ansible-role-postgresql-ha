@@ -29,7 +29,7 @@
   when: postgresql_log_directory != "pg_log"
 
 - name: PostgreSQL | Ensure the locale for lc_collate and lc_ctype is generated | Debian
-  become: yes
+  become: true
   community.general.locale_gen:
     name: "{{ item }}"
     state: present
@@ -47,7 +47,7 @@
 
 - name: PostgreSQL | Reset the cluster - drop the existing one | Debian
   ansible.builtin.shell: pg_dropcluster {{ postgresql_version }} {{ postgresql_cluster_name }}
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
 
@@ -61,7 +61,7 @@
     {% if postgresql_pwfile != "" %}--pwfile={{ postgresql_pwfile }} {% endif %}
     {% if postgresql_wal_directory != "" and postgresql_version is version_compare('10', '<') %}--xlogdir={{ postgresql_wal_directory }} {% endif %}
     {% if postgresql_wal_directory != "" and postgresql_version is version_compare('10', '>=') %}--waldir={{ postgresql_wal_directory }} {% endif %}
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
 
@@ -134,7 +134,7 @@
   ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} reload
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   #ignore_errors: true
   when: postgresql_configuration_pt1.changed or postgresql_configuration_pt2.changed or postgresql_configuration_pt3.changed or postgresql_systemd_custom_conf.changed
@@ -145,15 +145,15 @@
       chown postgres /etc/pgpool2/server.key /etc/pgpool2/server.cert
       chmod 0600 /etc/pgpool2/server.key /etc/pgpool2/server.cert
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: "root"
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: PostgreSQL | Restart service
   ansible.builtin.shell: 
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop && pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: postgresql_configuration_pt2.changed
   register: postgresql_restart
