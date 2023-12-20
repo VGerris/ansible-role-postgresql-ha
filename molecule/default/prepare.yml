@@ -9,7 +9,7 @@
       ansible.builtin.wait_for_connection:
 
     - name: Run apt update via shell # Until https://github.com/ansible/ansible/issues/28991
-      shell: rm /var/lib/apt/lists/* -vrf && apt-get update
+      ansible.builtin.shell: rm -vrf /var/lib/apt/lists/* && apt-get clean && apt-get update
       become: yes
 
     - name: Gather facts for the first time
