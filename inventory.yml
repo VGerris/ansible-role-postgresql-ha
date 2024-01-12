@@ -87,6 +87,9 @@ pgcluster:
       - name: admin
         pass: secret # postgresql >=10 does not accept unencrypted passwords
         encrypted: yes
+      - name: monitoring
+        pass: secret # postgresql >=10 does not accept unencrypted passwords
+        encrypted: yes
     # Roles
     postgresql_user_privileges:
       - name: "{{ repmgr_user }}"
@@ -96,6 +99,10 @@ pgcluster:
       - name: admin
         db: testdb
         role_attr_flags: "SUPERUSER"
+      - name: monitoring
+        db: testdb
+        priv: "ALL"
+
     # required for repmgr node rejoin --force-rewind
     postgresql_data_checksums: true
     postgresql_wal_compression: on
