@@ -34,6 +34,12 @@ postgresql_database_owner: "{{ postgresql_admin_user }}"
 
 postgresql_bin_directory: /usr/lib/postgresql/{{ postgresql_version }}/bin
 
+# Other PostgreSQL users
+postgresql_manager_user: admin
+postgresql_manager_password: secret
+postgresql_monitoring_user: monitoring
+postgresql_monitoring_password: secret
+
 # Extensions
 postgresql_ext_install_contrib: no
 postgresql_ext_install_dev_headers: no

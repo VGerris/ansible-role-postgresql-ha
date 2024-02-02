@@ -41,6 +41,13 @@
         repmgr_standby_reconnect_timeout: 60
         repmgr_node_rejoin_timeout: 60
 
+        # PostgreSQL users for admin and monitoring - CHANGE in production
+        postgresql_manager_user: admin
+        postgresql_manager_password: secret
+        postgresql_monitoring_user: monitoring
+        postgresql_monitoring_password: secret
+        postgresql_password_encryption: md5
+
         # Basic settings
         postgresql_version: 15
         postgresql_cluster_name: main
@@ -87,11 +94,11 @@
         postgresql_users:
           - name: "{{ repmgr_user }}"
             pass: "{{ repmgr_password }}"
-          - name: admin
-            pass: secret # postgresql >=10 does not accept unencrypted passwords
+          - name: "{{ postgresql_manager_user }}"
+            pass: "{{ postgresql_manager_password }}" # postgresql >=10 does not accept unencrypted passwords
             encrypted: yes
-          - name: monitoring
-            pass: secret # postgresql >=10 does not accept unencrypted passwords
+          - name: "{{ postgresql_monitoring_user }}"
+            pass: "{{ postgresql_monitoring_password }}" # postgresql >=10 does not accept unencrypted passwords
             encrypted: yes
         # Roles
         postgresql_user_privileges:
