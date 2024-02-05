@@ -46,7 +46,8 @@
         postgresql_manager_password: secret
         postgresql_monitoring_user: monitoring
         postgresql_monitoring_password: secret
-        postgresql_password_encryption: md5
+        #postgresql_password_encryption: md5
+        postgresql_password_encryption: scram-sha-256
 
         # Basic settings
         postgresql_version: 15
@@ -81,7 +82,7 @@
           - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
           - { type: "host", database: "all", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
           - { type: "host", database: "all", user: "postgres", address: "192.168.56.0/24", method: "trust" }
-          - { type: "host", database: "testdb", user: "all", address: "192.168.56.0/24", method: "md5" }
+          - { type: "host", database: "testdb", user: "all", address: "192.168.56.0/24", method: "scram-sha-256" }
         # Databases
         postgresql_databases:
           - name: "{{ repmgr_database }}"
