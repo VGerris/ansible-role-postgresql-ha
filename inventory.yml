@@ -85,10 +85,10 @@ pgcluster:
       - name: "{{ repmgr_user }}"
         pass: "{{ repmgr_password }}"
       - name: admin
-        pass: secret # postgresql >=10 does not accept unencrypted passwords
+        pass: "{{ postgresql_manager_password }}" # postgresql >=10 does not accept unencrypted passwords
         encrypted: yes
       - name: monitoring
-        pass: secret # postgresql >=10 does not accept unencrypted passwords
+        pass: "{{ postgresql_monitoring_password }}" # postgresql >=10 does not accept unencrypted passwords
         encrypted: yes
     # Roles
     postgresql_user_privileges:

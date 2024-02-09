@@ -43,10 +43,10 @@
 
         # PostgreSQL users for admin and monitoring - CHANGE in production
         postgresql_manager_user: admin
-        postgresql_manager_password: secret
+        postgresql_manager_password: postgresql_manager_password_replace
         postgresql_monitoring_user: monitoring
-        postgresql_monitoring_password: secret
-        #postgresql_password_encryption: md5
+        postgresql_monitoring_password: postgresql_monitoring_password_replace
+        #postgresql_password_encryption: md5 # the default when omitted
         postgresql_password_encryption: scram-sha-256
 
         # Basic settings

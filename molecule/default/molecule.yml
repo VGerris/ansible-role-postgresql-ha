@@ -95,7 +95,7 @@ provisioner:
           - name: "{{ repmgr_user }}"
             pass: "{{ repmgr_password }}"
           - name: admin
-            pass: secret
+            pass: {{ postgresql_manager_password }}
             encrypted: yes
         # Roles
         postgresql_user_privileges:
