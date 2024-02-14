@@ -130,8 +130,10 @@
       chown -R postgres /var/lib/postgresql/.ssh/
       sudo -u postgres bash -c 'eval "$(ssh-agent -s)" && ssh-add /var/lib/postgresql/.ssh/id_rsa_barman'
       ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
-      # scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub #- TODO verify if still needed
-      # cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys #- TODO verify if still needed
+      # make barman user being able to SSH to postgres on primary host
+      #scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub
+      sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub'
+      sudo -u postgres bash -c 'cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
       sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman cron'
       #sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-wal --force --archive pgsql01'
       sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-xlog --force --archive pgsql01'
@@ -141,11 +143,13 @@
   become_user: root
   when: inventory_hostname == repmgr_primary_hostname
 
-- name: Barman | setup known hosts to barman using postgres keys
+- name: Barman | setup known hosts and SSH keys to barman using postgres keys
   ansible.builtin.shell:
     cmd: |
       sudo -u postgres bash -c 'scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 192.168.56.10:/var/lib/postgresql/.ssh/id_rsa_barman /var/lib/postgresql/.ssh/id_rsa_barman'
       sudo -u postgres bash -c 'ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts'
+      sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub'
+      sudo -u postgres bash -c 'cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
     executable: /bin/bash
   become: yes
   become_user: root # "{{ postgresql_service_user }}"
