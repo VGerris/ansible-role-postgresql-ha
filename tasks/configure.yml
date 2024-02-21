@@ -92,6 +92,8 @@
     group: "{{ postgresql_service_group }}"
     mode: 0640
   register: postgresql_configuration_pt1
+  tags:
+    - restore_conf
 
 - name: PostgreSQL | Update configuration - pt. 2 (postgresql.conf)
   ansible.builtin.template:
@@ -102,6 +104,8 @@
     mode: 0640
   register: postgresql_configuration_pt2
   changed_when: true
+  tags:
+    - restore_conf
 
 - name: PostgreSQL | Update configuration - pt. 3 (pg_ident.conf)
   ansible.builtin.template:
@@ -112,6 +116,8 @@
     mode: 0640
   register: postgresql_configuration_pt4
   notify: Restart postgresql
+  tags:
+    - restore_conf
 
 - name: PostgreSQL | Create folder for additional configuration files
   ansible.builtin.file:

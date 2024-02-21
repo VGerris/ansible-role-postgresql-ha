@@ -160,19 +160,24 @@ In order to exactly figure out the purpose and valid values for each of these va
 ### Verifying cluster functionality
 
 ```bash
-ansible pgcluster -b --become-user postgres -m shell -a "repmgr cluster crosscheck"
+ansible pgcluster -b --become-user postgres -m shell -a "repmgr cluster crosscheck" -i inventory.yml
 ```
 
 ### Show cluster status
 
 ```bash
-ansible pgcluster -b --become-user postgres -m shell -a "repmgr cluster show"
+ansible pgcluster -b --become-user postgres -m shell -a "repmgr cluster show" -i inventory.yml
 ```
 
 ### List nodes and their attributes
 
 ```bash
-ansible pgcluster -b --become-user postgres -m shell -a "repmgr node status"
+ansible pgcluster -b --become-user postgres -m shell -a "repmgr node status" -i inventory.yml
+```
+
+### Restore the postgresql conf files using tags (e.g when restoring)
+```bash
+ansible-playbook playpostgresql.yml -i inventory.yml --tags "restore_conf"
 ```
 
 ### Re-register the standby node if it is not following properly
