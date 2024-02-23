@@ -65,7 +65,7 @@
         postgresql_archive_command: 'barman-wal-archive 192.168.56.20 pgsql01 %p'
         postgresql_restore_command: 'barman-wal-restore 192.168.56.20 pgsql01 %f %p'
         # repmgr barman restore command in /etc/repmgr.conf
-        repmgr_restore_command: /usr/bin/barman-wal-restore -U barman 192.168.56.20 pgsql01 %f %p
+        # repmgr_restore_command: /usr/bin/barman-wal-restore -U barman 192.168.56.20 pgsql01 %f %p
 
         postgresql_ext_install_repmgr: yes
         postgresql_shared_preload_libraries:
