@@ -142,6 +142,7 @@
   become: yes
   become_user: root
   when: inventory_hostname == repmgr_primary_hostname
+  run_once: true
 
 - name: Barman | setup known hosts and SSH keys to barman using postgres keys
   ansible.builtin.shell:
