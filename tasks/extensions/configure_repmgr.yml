@@ -123,6 +123,16 @@
   become_user: root
   when: inventory_hostname == repmgr_primary_hostname
 
+- name: Barman | check if next step should run
+  ansible.builtin.shell:
+    cmd: |
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman check pgsql01 --nagios'
+    executable: /bin/bash
+  register: should_barman_xlog_run
+  changed_when: should_barman_xlog_run.rc not in [0, 2]
+  failed_when: "should_barman_xlog_run.rc != 0 and should_barman_xlog_run.rc != 2"
+  when: inventory_hostname == repmgr_primary_hostname
+
 - name: Barman | setup SSH towards barman for repmgr with barman keys and create backup
   ansible.builtin.shell:
     cmd: |
@@ -141,8 +151,7 @@
     executable: /bin/bash
   become: yes
   become_user: root
-  when: inventory_hostname == repmgr_primary_hostname
-  run_once: true
+  when: inventory_hostname == repmgr_primary_hostname and should_barman_xlog_run.rc not in [0, 2]
 
 - name: Barman | setup known hosts and SSH keys to barman using postgres keys
   ansible.builtin.shell:
