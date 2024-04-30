@@ -94,7 +94,7 @@
             owner: "{{ repmgr_user }}"
             encoding: "UTF-8"
           - name: testdb
-            owner: admin
+            owner: monitoring
             encoding: "UTF-8"
         # Users
         postgresql_users:
