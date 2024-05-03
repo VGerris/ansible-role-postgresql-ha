@@ -31,7 +31,7 @@ pgcluster:
     # Basic settings
     postgresql_listen_addresses: "*"
     postgresql_port: 5432
-    postgresql_max_connections: 128
+    postgresql_max_connections: 250
     # WAL
     postgresql_wal_level: "replica"
     postgresql_max_wal_senders: 10
