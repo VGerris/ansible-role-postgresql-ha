@@ -41,10 +41,10 @@ postgresql_monitoring_user: monitoring
 postgresql_monitoring_password: secret
 
 # Extensions
-postgresql_ext_install_contrib: no
-postgresql_ext_install_dev_headers: no
-postgresql_ext_install_postgis: no
-postgresql_ext_install_repmgr: no
+postgresql_ext_install_contrib: false
+postgresql_ext_install_dev_headers: false
+postgresql_ext_install_postgis: false
+postgresql_ext_install_repmgr: false
 
 postgresql_ext_postgis_version: "2.5" # be careful: check whether the postgresql/postgis versions work together
 postgresql_ext_postgis_deps:
@@ -53,8 +53,8 @@ postgresql_ext_postgis_deps:
   - "postgresql-{{ postgresql_version }}-postgis-scripts"
 
 # Foreign Data Wrapper(s)
-postgresql_fdw_mysql: no
-postgresql_fdw_ogr: no
+postgresql_fdw_mysql: false
+postgresql_fdw_ogr: false
 postgresql_fdw_mysql_packages: "postgresql-{{ postgresql_version }}-mysql-fdw"
 postgresql_fdw_ogr_packages: "postgresql-{{ postgresql_version }}-ogr-fdw"
 
@@ -75,9 +75,9 @@ postgresql_user_privileges: []
 
 # pg_hba.conf
 postgresql_pg_hba_default:
-  - { type: local, database: all, user: all, address: "",             method: "{{ postgresql_default_auth_method }}", comment: '"local" is for Unix domain socket connections only' }
-  - { type: host,  database: all, user: all, address: "127.0.0.1/32", method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv4 local connections:" }
-  - { type: host,  database: all, user: all, address: "::1/128",      method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv6 local connections:" }
+  - { type: local, database: all, user: all, address: "", method: "{{ postgresql_default_auth_method }}", comment: '"local" is for Unix domain socket connections only' }
+  - { type: host, database: all, user: all, address: "127.0.0.1/32", method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv4 local connections:" }
+  - { type: host, database: all, user: all, address: "::1/128", method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv6 local connections:" }
   - { type: local, database: all, user: "{{ postgresql_admin_user }}", address: "", method: "peer map=root_as_{{ postgresql_admin_user }}", comment: "Local root Unix user, passwordless access" }
 
 postgresql_pg_hba_md5_hosts: []
@@ -94,9 +94,9 @@ postgresql_pg_ident:
 
 # postgresql.conf
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # FILE LOCATIONS
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Location of postgres configuration files here
 postgresql_conf_directory: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}"
@@ -112,9 +112,9 @@ postgresql_pid_directory: "/var/run/postgresql"
 # If external_pid_file is not explicitly set, on extra PID file is written
 postgresql_external_pid_file: "{{ postgresql_pid_directory }}/{{ postgresql_version }}-{{ postgresql_cluster_name }}.pid"
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # CONNECTIONS AND AUTHENTICATION
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 postgresql_listen_addresses:
   - "localhost"
@@ -129,8 +129,8 @@ postgresql_unix_socket_directories:     # (>= 9.3)
 postgresql_unix_socket_group: ""
 postgresql_unix_socket_permissions: "0777" # begin with 0 to use octal notation
 
-postgresql_bonjour: off      # advertise server via Bonjour
-postgresql_bonjour_name: ""  # defaults to the computer name
+postgresql_bonjour: false # advertise server via Bonjour
+postgresql_bonjour_name: "" # defaults to the computer name
 
 
 # - Security and Authentication -
@@ -145,24 +145,24 @@ postgresql_ssl_ciphers:
   - "@STRENGTH"
 postgresql_ssl_prefer_server_ciphers: on
 postgresql_ssl_ecdh_curve: "prime256v1"
-postgresql_ssl_min_protocol_version: "TLSv1"                        # (>= 12)
-postgresql_ssl_max_protocol_version: ""                             # (>= 12)
-postgresql_ssl_dh_params_file: ""                                   # (>= 10)  
-postgresql_ssl_passphrase_command: ""                               # (>= 11)
-postgresql_ssl_passphrase_command_supports_reload: off              # (>= 11)
-postgresql_ssl_renegotiation_limit: 512MB                           # amount of data between renegotiations
-postgresql_ssl_cert_file: "/etc/pgpool2/server.cert"    # (>= 9.2)
-postgresql_ssl_key_file: "/etc/pgpool2/server.key"   # (>= 9.2)
-postgresql_ssl_ca_file: ""                                          # (>= 9.2)
-postgresql_ssl_crl_file: ""                                         # (>= 9.2)
-postgresql_password_encryption: md5                                 # on (<14) scram-sha-256  , md5
-postgresql_db_user_namespace: off
-postgresql_row_security: off                                        # (>= 9.5)
+postgresql_ssl_min_protocol_version: "TLSv1" # (>= 12)
+postgresql_ssl_max_protocol_version: "" # (>= 12)
+postgresql_ssl_dh_params_file: "" # (>= 10)
+postgresql_ssl_passphrase_command: "" # (>= 11)
+postgresql_ssl_passphrase_command_supports_reload: false # (>= 11)
+postgresql_ssl_renegotiation_limit: 512MB # amount of data between renegotiations
+postgresql_ssl_cert_file: "/etc/pgpool2/server.cert" # (>= 9.2)
+postgresql_ssl_key_file: "/etc/pgpool2/server.key" # (>= 9.2)
+postgresql_ssl_ca_file: "" # (>= 9.2)
+postgresql_ssl_crl_file: "" # (>= 9.2)
+postgresql_password_encryption: md5 # on (<14) scram-sha-256  , md5
+postgresql_db_user_namespace: false
+postgresql_row_security: false # (>= 9.5)
 
 # Kerberos and GSSAPI
 postgresql_krb_server_keyfile: ""
 postgresql_krb_srvname: "postgres" # (<= 9.3)
-postgresql_krb_caseins_users: off
+postgresql_krb_caseins_users: false
 
 # TCP Keepalives, 0 selects the system default (in seconds)
 postgresql_tcp_keepalives_idle: 0
@@ -170,93 +170,85 @@ postgresql_tcp_keepalives_interval: 0
 postgresql_tcp_keepalives_count: 0
 postgresql_tcp_user_timeout: 0                                      # (>= 12)
 
-
 #------------------------------------------------------------------------------
 # RESOURCE USAGE (except WAL)
 #------------------------------------------------------------------------------
 
 # - Memory -
 
-postgresql_shared_buffers:       128MB # min 128kB
-postgresql_huge_pages:           "try"   # on, off, or try
-postgresql_temp_buffers:         8MB   # min 800kB
+postgresql_shared_buffers: 128MB # min 128kB
+postgresql_huge_pages: "try"   # on, off, or try
+postgresql_temp_buffers: 8MB   # min 800kB
 
 # Caution: it is not advisable to set max_prepared_transactions nonzero unless
 # you actively intend to use prepared transactions.
 postgresql_max_prepared_transactions: 0 # zero disables the feature
 
-postgresql_work_mem:                   1MB      # min 64kB
-postgresql_hash_mem_multiplier:        1.0      # 1-1000.0 multiplier on hash table work_mem
-postgresql_maintenance_work_mem:       16MB     # min 1MB
-postgresql_replacement_sort_tuples:    150000   # (>= 9.6) limits use of replacement selection sort
-postgresql_autovacuum_work_mem:        -1       # min 1MB, or -1 to use maintenance_work_mem
-postgresql_logical_decoding_work_mem:  64MB     # min 64kB
-postgresql_max_stack_depth:            2MB      # min 100kB
-postgresql_shared_memory_type:         "mmap"   # (>= 12)
+postgresql_work_mem: 1MB # min 64kB
+postgresql_hash_mem_multiplier: 1.0 # 1-1000.0 multiplier on hash table work_mem
+postgresql_maintenance_work_mem: 16MB # min 1MB
+postgresql_replacement_sort_tuples: 150000 # (>= 9.6) limits use of replacement selection sort
+postgresql_autovacuum_work_mem: -1 # min 1MB, or -1 to use maintenance_work_mem
+postgresql_logical_decoding_work_mem: 64MB # min 64kB
+postgresql_max_stack_depth: 2MB # min 100kB
+postgresql_shared_memory_type: "mmap" # (>= 12)
 
-postgresql_dynamic_shared_memory_type: "posix"  # the default is the first option
-                                                # supported by the operating system:
-                                                #   posix
-                                                #   sysv
-                                                #   windows
-                                                #   mmap
-                                                # use none to disable dynamic shared memory
-
+postgresql_dynamic_shared_memory_type: "posix" 
+# the default is the first option
+# supported by the operating system:
+#   posix
+#   sysv
+#   windows
+#   mmap
+# use none to disable dynamic shared memory
 
 # - Disk -
 
 # limits per-process temp file space in kB, or -1 for no limit (>= 9.2)
 postgresql_temp_file_limit: -1
 
-
 # - Kernel Resource Usage -
 
 postgresql_max_files_per_process: 1000  # min 64
 postgresql_shared_preload_libraries: []
 
-
 # - Cost-Based Vacuum Delay -
 
-postgresql_vacuum_cost_delay:      0       # 0-100 milliseconds
-postgresql_vacuum_cost_page_hit:   1       # 0-10000 credits
-postgresql_vacuum_cost_page_miss:  10      # 0-10000 credits
-postgresql_vacuum_cost_page_dirty: 20      # 0-10000 credits
-postgresql_vacuum_cost_limit:      200     # 1-10000 credits
+postgresql_vacuum_cost_delay: 0 # 0-100 milliseconds
+postgresql_vacuum_cost_page_hit: 1 # 0-10000 credits
+postgresql_vacuum_cost_page_miss: 10 # 0-10000 credits
+postgresql_vacuum_cost_page_dirty: 20 # 0-10000 credits
+postgresql_vacuum_cost_limit: 200 # 1-10000 credits
 
 
 # - Background Writer -
 
-postgresql_bgwriter_delay:          200ms  # 10-10000ms between rounds
-postgresql_bgwriter_lru_maxpages:   100    # 0-1000 max buffers written/round
-postgresql_bgwriter_lru_multiplier: 2.0    # 0-10.0 multiplier on buffers scanned/round
-postgresql_bgwriter_flush_after:    0      # (>= 9.6) 0 disables,
-                                           # default is 512kB on linux, 0 otherwise
-
+postgresql_bgwriter_delay: 200ms # 10-10000ms between rounds
+postgresql_bgwriter_lru_maxpages: 100 # 0-1000 max buffers written/round
+postgresql_bgwriter_lru_multiplier: 2.0 # 0-10.0 multiplier on buffers scanned/round
+postgresql_bgwriter_flush_after: 0 # (>= 9.6) 0 disables,
+# default is 512kB on linux, 0 otherwise
 
 # - Asynchronous Behavior -
 
-postgresql_effective_io_concurrency:         1   # 1-1000; 0 disables prefetching
-postgresql_maintenance_io_concurrency:       10  # 1-1000; 0 disables prefetching
-postgresql_max_worker_processes:             8   # (change requires restart)
-postgresql_max_parallel_maintenance_workers: 2   # (>= 11) taken from max_parallel_workers
-postgresql_max_parallel_workers_per_gather:  0   # (>= 9.6) taken from max_worker_processes
-postgresql_parallel_leader_participation:    on  # (>= 11)
-postgresql_max_parallel_workers:             8   # (>= 10)
-postgresql_old_snapshot_threshold:           -1  # (>= 9.6) 1min-60d; -1 disables; 0 is immediate
-                                                 # (change requires restart)
-postgresql_backend_flush_after:              0   # (>= 9.6) 0 disables, default is 0
+postgresql_effective_io_concurrency: 1 # 1-1000; 0 disables prefetching
+postgresql_maintenance_io_concurrency: 10 # 1-1000; 0 disables prefetching
+postgresql_max_worker_processes: 8 # (change requires restart)
+postgresql_max_parallel_maintenance_workers: 2 # (>= 11) taken from max_parallel_workers
+postgresql_max_parallel_workers_per_gather: 0 # (>= 9.6) taken from max_worker_processes
+postgresql_parallel_leader_participation: on # (>= 11)
+postgresql_max_parallel_workers: 8 # (>= 10)
+postgresql_old_snapshot_threshold: -1 # (>= 9.6) 1min-60d; -1 disables; 0 is immediate (change requires restart)
+postgresql_backend_flush_after: 0 # (>= 9.6) 0 disables, default is 0
 
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # WRITE AHEAD LOG
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # - Settings -
 
-postgresql_wal_level: "replica"   # minimal, archive (<= 9.5), hot_standby (<= 9.5), replica (>= 9.6), or logical
-postgresql_fsync:     on          # flush data to disk for crash safety
-                                          # (turning this off can cause
-                                          # unrecoverable data corruption)
+postgresql_wal_level: "replica" # minimal, archive (<= 9.5), hot_standby (<= 9.5), replica (>= 9.6), or logical
+postgresql_fsync: on # flush data to disk for crash safety (turning this off can cause unrecoverable data corruption)
 
 # Synchronization level:
 # - off
@@ -275,11 +267,11 @@ postgresql_synchronous_commit: "on"
 postgresql_wal_sync_method: "fsync"
 
 # recover from partial page writes
-postgresql_full_page_writes: on
-postgresql_wal_compression: off     # (>= 9.5)
-postgresql_wal_log_hints: off       # also do full page writes of non-critical updates
-postgresql_wal_init_zero: on                      # zero-fill new WAL files
-postgresql_wal_recycle: on                        # recycle WAL files
+postgresql_full_page_writes: true
+postgresql_wal_compression: false     # (>= 9.5)
+postgresql_wal_log_hints: false # also do full page writes of non-critical updates
+postgresql_wal_init_zero: true # zero-fill new WAL files
+postgresql_wal_recycle: true # recycle WAL files
 
 postgresql_wal_buffers:            -1     # min 32kB, -1 sets based on shared_buffers
 postgresql_wal_writer_delay:       200ms  # 1-10000 milliseconds
@@ -288,18 +280,15 @@ postgresql_wal_skip_threshold:     2MB
 postgresql_commit_delay:           0      # range 0-100000, in microseconds
 postgresql_commit_siblings:        5      # range 1-1000
 
-
 # - Checkpoints -
 
-postgresql_checkpoint_segments:          3     # (<= 9.4) in logfile segments, min 1, 16MB each
-postgresql_max_wal_size:                 1GB   # (>= 9.5)
-postgresql_min_wal_size:                 80MB  # (>= 9.5)
-postgresql_checkpoint_flush_after:       0     # (>= 9.6) 0 disables,
-                                               # default is 256kB on linux, 0 otherwise
-postgresql_checkpoint_timeout:           5min  # range 30s-1d
-postgresql_checkpoint_completion_target: 0.5   # checkpoint target duration, 0.0 - 1.0
-postgresql_checkpoint_warning:           30s   # 0 disables
-
+postgresql_checkpoint_segments: 3 # (<= 9.4) in logfile segments, min 1, 16MB each
+postgresql_max_wal_size: 1GB # (>= 9.5)
+postgresql_min_wal_size: 80MB # (>= 9.5)
+postgresql_checkpoint_flush_after: 0 # (>= 9.6) 0 disables, default is 256kB on linux, 0 otherwise
+postgresql_checkpoint_timeout: 5min # range 30s-1d
+postgresql_checkpoint_completion_target: 0.5 # checkpoint target duration, 0.0 - 1.0
+postgresql_checkpoint_warning: 30s # 0 disables
 
 # - Archiving -
 
