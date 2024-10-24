@@ -112,16 +112,39 @@
       "repmgr_primary_hostname": "{{ repmgr_primary_hostname == inventory_hostname }}"
       "inventory_hostname": "{{ inventory_hostname }}"
 
-- name: flush # we flush here because if restart happens after this the repmgr loses the followers
+- name: Flush # we flush here because if restart happens after this the repmgr loses the followers
   ansible.builtin.meta: flush_handlers
 
-- name: Barman | setup SSH towards primary host
-  ansible.builtin.shell:
-    cmd: ssh-keygen -f /var/lib/postgresql/.ssh/id_rsa -y > /home/ubuntu/barman_id_rsa.pub && chown ubuntu /home/ubuntu/barman_id_rsa.pub
-    executable: /bin/bash
-  become: yes
+# - name: Create SSH keypair and setup keys for barman user towards postgres
+#   ansible.builtin.shell:
+#     cmd: |
+#       # touch /home/ubuntu/.ssh/known_hosts && chmod 660 /home/ubuntu/.ssh/known_hosts && cat /home/ubuntu/.ssh/known_hosts
+#       # ssh-keyscan -H barman_host_replace >> /home/ubuntu/.ssh/known_hosts
+#       sudo -u barman bash -c 'if ! [ -d ~/.ssh ]; then mkdir ~/.ssh; fi && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
+#       sudo -u barman bash -c 'ssh-keygen -b 4096 -t rsa -f /var/lib/barman/.ssh/id_rsa -N "" -C "barman@192.168.56.20" <<< y'
+#     executable: /bin/bash
+#     creates: $HOME/.ssh/id_ed25519
+#   become: true
+#   become_user: root
+#   register: generate_barman_psql_keypair
+#   changed_when: generate_barman_psql_keypair.rc != 0
+#   when: "'psqlbarman' in group_names"
+
+# - name: Fetch the public SSH key to put it in the PostgreSQL servers so barman can login
+#   ansible.builtin.fetch:
+#     src: /var/lib/barman/.ssh/id_rsa.pub
+#     dest: ./barman_id_rsa.pub
+#     flat: true
+#   when: "'psqlbarman' in group_names"
+
+- name: Set authorized key taken from file
+  ansible.posix.authorized_key:
+    user: postgres
+    state: present
+    key: "{{ lookup('file', './barman_id_rsa.pub') }}"
+  become: true
   become_user: root
-  when: inventory_hostname == repmgr_primary_hostname
+  when: "'psqlnodes' in group_names"
 
 - name: Barman | check if next step should run
   ansible.builtin.shell:
@@ -136,20 +159,20 @@
 - name: Barman | setup SSH towards barman for repmgr with barman keys and create backup
   ansible.builtin.shell:
     cmd: |
-      cp /home/ubuntu/id_rsa_barman.pub /var/lib/postgresql/.ssh/ && cp /home/ubuntu/id_rsa_barman /var/lib/postgresql/.ssh/
-      chown -R postgres /var/lib/postgresql/.ssh/
+      #cp /var/lib/postgresql/.ssh/id_rsa /var/lib/postgresql/.ssh/id_rsa_barman
+      chown -R postgres:postgres /var/lib/postgresql/.ssh/
       sudo -u postgres bash -c 'eval "$(ssh-agent -s)" && ssh-add /var/lib/postgresql/.ssh/id_rsa_barman'
-      ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts
-      # make barman user being able to SSH to postgres on primary host
+      sudo -u postgres bash -c 'ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts'
+      # make barman user able to SSH to postgres on primary host
       #scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub
-      sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub'
-      sudo -u postgres bash -c 'cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
+      #sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/id_rsa_barman.pub'
+      sudo -u postgres bash -c 'cat /var/lib/postgresql/.ssh/id_rsa_barman.pub >> /var/lib/postgresql/.ssh/authorized_keys'
       sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman cron'
       #sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-wal --force --archive pgsql01'
-      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-xlog --force --archive pgsql01'
-      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman backup pgsql01 --wait'
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-xlog --force --archive {{ repmgr_primary_hostname }}'
+      sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman backup {{ repmgr_primary_hostname }} --wait'
     executable: /bin/bash
-  become: true
+  become: yes
   become_user: root
   when: inventory_hostname == repmgr_primary_hostname and should_barman_xlog_run.rc not in [0, 2]
 
@@ -158,12 +181,12 @@
     cmd: |
       sudo -u postgres bash -c 'scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null 192.168.56.10:/var/lib/postgresql/.ssh/id_rsa_barman /var/lib/postgresql/.ssh/id_rsa_barman'
       sudo -u postgres bash -c 'ssh-keyscan -H 192.168.56.20 >> /var/lib/postgresql/.ssh/known_hosts'
-      sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/barman_id_rsa.pub'
-      sudo -u postgres bash -c 'cat /var/lib/postgresql/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
+      sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/.ssh/barman_id_rsa.pub'
+      sudo -u postgres bash -c 'cat /var/lib/postgresql/.ssh/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
     executable: /bin/bash
   become: yes
   become_user: root # "{{ postgresql_service_user }}"
-  when: inventory_hostname != repmgr_primary_hostname
+  #when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Register as primary
   ansible.builtin.command: "repmgr primary register -F"
