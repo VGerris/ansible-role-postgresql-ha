@@ -6,7 +6,7 @@
 
   tasks:
     - name: Verify cluster functionality
-      ansible.builtin.shell: 
+      ansible.builtin.shell:
         cmd: repmgr cluster crosscheck
         executable: /bin/bash
       become_user: "{{ postgresql_service_user }}"

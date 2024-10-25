@@ -39,7 +39,7 @@
   when: ansible_os_family == "Debian" and item != "C.UTF-8"
 
 - name: PostgreSQL | Stop PostgreSQL | Debian
-  ansible.builtin.shell: 
+  ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop
     executable: /bin/bash
   become_user: "{{ postgresql_service_user }}"
@@ -66,7 +66,7 @@
   when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
 
 - name: PostgreSQL | Start PostgreSQL | Debian
-  ansible.builtin.shell: 
+  ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
   become_user: "{{ postgresql_service_user }}"
@@ -156,7 +156,7 @@
   ignore_errors: true
 
 - name: PostgreSQL | Restart service
-  ansible.builtin.shell: 
+  ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop && pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
   become: true

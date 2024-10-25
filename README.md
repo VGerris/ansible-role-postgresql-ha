@@ -9,7 +9,7 @@ Tested with :
   - ~~Debian 11.x :heavy_check_mark:~~
   - ~~Ubuntu 18.04.x :heavy_check_mark:~~
   - ~~Ubuntu 20.04.x :heavy_check_mark:~~
-  - Ubuntu 22.04 
+  - Ubuntu 22.04
 
 ---
 
@@ -63,7 +63,7 @@ collections:
 
 ```
 
-### Dependencies 
+### Dependencies
 
 - [cryptography](https://pypi.org/project/cryptography/) (ansible host)
 
@@ -116,7 +116,7 @@ In order to exactly figure out the purpose and valid values for each of these va
         postgresql_ext_install_repmgr: yes
         postgresql_shared_preload_libraries:
           - repmgr
-        # postgresql logging 
+        # postgresql logging
         postgresql_log_checkpoints: on
         postgresql_log_connections: on
         postgresql_log_disconnections: on
@@ -124,10 +124,10 @@ In order to exactly figure out the purpose and valid values for each of these va
         # pg_hba.conf
         postgresql_pg_hba_custom:
           - { type: "host", database: "all", user: "all", address: "192.168.56.0/24", method: "md5" }
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }  
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/32", method: "trust" }  
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/32", method: "trust" }
         # Databases
         postgresql_databases:
           - name: "{{ repmgr_database }}"
@@ -194,11 +194,11 @@ pg_ctlcluster 15 main start
 repmgr standby register -F
 ```
 
-### Register (clone) an additionnal standby node 
+### Register (clone) an additionnal standby node
 
 ```bash
 # Assuming the current primary hostname is pgsql01
-ansible-playbook myplaybook.yml -l 'pgsql04' -e 'repmgr_primary_hostname=pgsql01' -vv 
+ansible-playbook myplaybook.yml -l 'pgsql04' -e 'repmgr_primary_hostname=pgsql01' -vv
 ```
 
 ## Register former primary as a standby node after automatic failover
@@ -210,7 +210,7 @@ postgres@pgsql01:~$ pg_ctlcluster 15 main start
 postgres@pgsql01:~$ repmgr standby register --force
 ```
 
-Or you may use the repmgr node rejoin with [pg_rewind](https://repmgr.org/docs/current/repmgr-node-rejoin.html#REPMGR-NODE-REJOIN-PG-REWIND) 
+Or you may use the repmgr node rejoin with [pg_rewind](https://repmgr.org/docs/current/repmgr-node-rejoin.html#REPMGR-NODE-REJOIN-PG-REWIND)
 
 ```bash
 repmgr node rejoin -d repmgr -U repmgr -h pgsql02 --verbose --force-rewind=/usr/lib/postgresql/<db_ver>/bin/pg_rewind
@@ -219,13 +219,13 @@ or from the ansible host:
 ```bash
 ansible pgsql01 -b --become-user postgres -m shell -a "repmgr node rejoin -d repmgr -U repmgr -h pgsql02 --verbose --force-rewind" -i inventory.yml
 # and to switch roles back:
-ansible pgsql01 -b --become-user postgres -m shell -a "repmgr standby switchover" -i inventory.yml 
+ansible pgsql01 -b --become-user postgres -m shell -a "repmgr standby switchover" -i inventory.yml
 ```
 
 Some more info on failover :
 
   - https://www.repmgr.org/docs/5.3/repmgrd-demonstration.html
-  - https://www.repmgr.org/docs/5.3/promoting-standby.html 
+  - https://www.repmgr.org/docs/5.3/promoting-standby.html
 
 ## License
 

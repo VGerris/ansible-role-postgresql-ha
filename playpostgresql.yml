@@ -6,7 +6,7 @@
     - name: Run apt update via shell # Until https://github.com/ansible/ansible/issues/28991
       shell: apt update
       become: yes
-  
+
   roles:
     - name: postgresql
       vars:
@@ -70,7 +70,7 @@
         postgresql_ext_install_repmgr: yes
         postgresql_shared_preload_libraries:
           - repmgr
-        # postgresql logging 
+        # postgresql logging
         postgresql_log_checkpoints: on
         postgresql_log_connections: on
         postgresql_log_disconnections: on
@@ -79,9 +79,9 @@
         # pg_hba.conf
         postgresql_pg_hba_custom:
         #  - { type: "host", database: "all", user: "all", address: "0.0.0.0/0", method: "md5" }
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }  
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
           - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
           - { type: "host", database: "all", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
           - { type: "host", database: "all", user: "postgres", address: "192.168.56.0/24", method: "trust" }

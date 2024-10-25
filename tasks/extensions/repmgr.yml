@@ -13,7 +13,7 @@
 - name: PostgreSQL | Extensions | Use specific version from repo | apt
   ansible.builtin.set_fact:
     repmgr_apt_name: "postgresql-{{ postgresql_version }}-repmgr={{ repmgr_version_debian }}"
-  when: 
+  when:
     - ansible_os_family == "Debian"
     - repmgr_version_debian is defined
 

@@ -14,7 +14,7 @@ driver:
 platforms:
   - name: pgsql01
     box: ${MOLECULE_DISTRO:-"generic/debian11"}
-    groups: 
+    groups:
       - pgcluster
     config_options:
       ssh.keep_alive: yes
@@ -31,7 +31,7 @@ platforms:
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "'vagrant'"
-    groups: 
+    groups:
       - pgcluster
     memory: 1024
     cpus: 1
@@ -60,7 +60,7 @@ provisioner:
   log: true
   inventory:
     group_vars:
-      pgcluster: 
+      pgcluster:
         postgresql_version: ${POSTGRESQL_VERSION:-"15"}
         postgresql_port: 5432
         repmgr_version: ${REPMGR_VERSION:-"5.3"}
@@ -78,10 +78,10 @@ provisioner:
           - repmgr
         postgresql_pg_hba_custom:
           - { type: "host", database: "all", user: "all", address: "192.168.30.0/24", method: "md5" }
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.30.0/24", method: "trust" }  
-          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.30.0/24", method: "trust" } 
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.30.0/24", method: "trust" }
+          - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+          - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.30.0/24", method: "trust" }
         # Databases
         postgresql_databases:
           - name: "{{ repmgr_database }}"
@@ -95,7 +95,7 @@ provisioner:
           - name: "{{ repmgr_user }}"
             pass: "{{ repmgr_password }}"
           - name: admin
-            pass: {{ postgresql_manager_password }}
+            pass: "{{ postgresql_manager_password }}"
             encrypted: yes
         # Roles
         postgresql_user_privileges:

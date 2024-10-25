@@ -439,4 +439,3 @@ ssh_options='-q -o ConnectTimeout=10'	# Options to append to "ssh"
 					# Note that these values will be checked when executing
 					# "repmgr standby switchover" to warn about potential
 					# issues with shutting down the demotion candidate.
-

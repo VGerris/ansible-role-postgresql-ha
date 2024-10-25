@@ -32,6 +32,6 @@
 - name: Repmgr | Ensure repmgr_master host exists
   ansible.builtin.fail:
     msg: "{{ repmgr_master }} was not found in {{ repmgr_target_group }}"
-  when: 
+  when:
     - repmgr_primary_check.stdout == "" and
       repmgr_master is not in repmgr_target_group_hosts

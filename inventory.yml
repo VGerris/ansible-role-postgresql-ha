@@ -8,10 +8,10 @@ all:
 pgcluster:
   hosts:
     pgsql01:
-      ansible_host: host1_replace 
-      repmgr_node_id: 1 
+      ansible_host: host1_replace
+      repmgr_node_id: 1
       repmgr_priority: 3
-    pgsql02:   
+    pgsql02:
       ansible_host: host2_replace
       repmgr_node_id: 2
       repmgr_priority: 2
@@ -58,7 +58,7 @@ pgcluster:
     postgresql_max_parallel_workers_per_gather: 1
     postgresql_max_parallel_workers: 2
     postgresql_max_parallel_maintenance_workers: 1
-    # postgresql logging 
+    # postgresql logging
     postgresql_log_checkpoints: on
     postgresql_log_connections: on
     postgresql_log_disconnections: on

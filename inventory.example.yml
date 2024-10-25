@@ -8,14 +8,14 @@ all:
 pgcluster:
   hosts:
     pgsql01:
-      ansible_host: 192.168.56.10  
-      repmgr_node_id: 1 
+      ansible_host: 192.168.56.10
+      repmgr_node_id: 1
       repmgr_priority: 3
-    pgsql02:   
+    pgsql02:
       ansible_host: 192.168.56.11
       repmgr_node_id: 2
       repmgr_priority: 2
-    pgsql03:     
+    pgsql03:
       ansible_host: 192.168.56.12
       repmgr_node_id: 3
       repmgr_priority: 1
@@ -57,17 +57,17 @@ pgcluster:
     postgresql_max_parallel_workers_per_gather: 1
     postgresql_max_parallel_workers: 2
     postgresql_max_parallel_maintenance_workers: 1
-    # postgresql logging 
+    # postgresql logging
     postgresql_log_checkpoints: on
     postgresql_log_connections: on
     postgresql_log_disconnections: on
     postgresql_log_temp_files: 0
     # pg_hba.conf
     postgresql_pg_hba_custom:
-      - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }  
-      - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-      - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }  
-      - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }  
+      - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
+      - { type: "host", database: "replication", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+      - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "127.0.0.1/32", method: "trust" }
+      - { type: "host", database: "{{ repmgr_database }}", user: "{{ repmgr_user }}", address: "192.168.56.0/24", method: "trust" }
       - { type: "host", database: "all", user: "postgres", address: "192.168.56.0/24", method: "trust" }
       - { type: "host", database: "testdb", user: "all", address: "192.168.56.0/24", method: "md5" }
       - { type: "host", database: "testdb", user: "monitoring", address: "192.168.56.20/32", method: "trust" }
