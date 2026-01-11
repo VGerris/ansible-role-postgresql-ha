@@ -2,7 +2,7 @@
 all:
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    postgresql_version: 15
+    postgresql_version: 16
     repmgr_version: 5.4
     repmgr_master: pgsql01
 pgcluster:

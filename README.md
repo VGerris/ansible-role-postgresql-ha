@@ -188,9 +188,9 @@ WARNING: following issues were detected
 ```
 On the standby node (pgslq02 by default), as postgres user
 ```bash
-pg_ctlcluster 15 main stop
+pg_ctlcluster 16 main stop
 repmgr -F -h pgsql01 -U repmgr -d repmgr standby clone
-pg_ctlcluster 15 main start
+pg_ctlcluster 16 main start
 repmgr standby register -F
 ```
 
@@ -204,9 +204,9 @@ ansible-playbook myplaybook.yml -l 'pgsql04' -e 'repmgr_primary_hostname=pgsql01
 ## Register former primary as a standby node after automatic failover
 
 ```
-postgres@pgsql01:~$ pg_ctlcluster 15 main stop
+postgres@pgsql01:~$ pg_ctlcluster 16 main stop
 postgres@pgsql01:~$ repmgr standby clone --force -h pgsql02 -U repmgr -d repmgr
-postgres@pgsql01:~$ pg_ctlcluster 15 main start
+postgres@pgsql01:~$ pg_ctlcluster 16 main start
 postgres@pgsql01:~$ repmgr standby register --force
 ```
 
