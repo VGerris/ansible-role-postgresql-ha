@@ -1,7 +1,7 @@
 ---
 - ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
-    - "../vars/{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_facts['distribution_release'] }}.yml"
     - "../vars/empty.yml"
   tags: skip_ansible_lint
 

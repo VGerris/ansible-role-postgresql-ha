@@ -2,13 +2,13 @@
 - name: PostgreSQL | Extensions | Add 2nd Quadrant repo gpg key | apt
   ansible.builtin.apt_key:
     url: "{{ repmgr_gpg_key_url }}"
-  when: ansible_pkg_mgr == "apt" and repmgr_apt_repository_add
+  when: ansible_facts['pkg_mgr'] == "apt" and repmgr_apt_repository_add
 
 - name: PostgreSQL | Extensions | Add 2nd Quadrant repo for repmgr | apt
   ansible.builtin.apt_repository:
     repo: "{{ repmgr_apt_repository }}"
     filename: 2ndquadrant-dl-default-release
-  when: ansible_pkg_mgr == "apt" and repmgr_apt_repository_add
+  when: ansible_facts['pkg_mgr'] == "apt" and repmgr_apt_repository_add
 
 - name: PostgreSQL | Extensions | Use specific version from repo | apt
   ansible.builtin.set_fact:
@@ -23,5 +23,5 @@
     state: present
     update_cache: yes
     cache_valid_time: "{{ apt_cache_valid_time | default(3600) }}"
-  when: ansible_pkg_mgr == "apt"
+  when: ansible_facts['pkg_mgr'] == "apt"
   notify: Restart postgresql

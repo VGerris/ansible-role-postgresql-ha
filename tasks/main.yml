@@ -2,7 +2,7 @@
 - name: Load OS-specific variables
   ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
-    - "../vars/{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_facts['distribution_release'] }}.yml"
     - "../vars/empty.yml"
   tags: [always]
 
@@ -18,7 +18,7 @@
 
 - name: Install PostgreSQL with apt
   ansible.builtin.import_tasks: install_apt.yml
-  when: ansible_pkg_mgr == "apt"
+  when: ansible_facts['pkg_mgr'] == "apt"
   tags: [postgresql, postgresql-install]
 
 - name: Install PostgreSQL extensions
@@ -27,7 +27,7 @@
 
 - name: Detect Repmgr primary
   ansible.builtin.import_tasks: extensions/detect_repmgr_primary.yml
-  when: postgresql_ext_install_repmgr and ansible_service_mgr == 'systemd'
+  when: postgresql_ext_install_repmgr and ansible_facts['service_mgr'] == 'systemd'
   tags: [postgresql, postgresql-extensions]
 
 - name: Install Foreign Data Wrappers
@@ -56,7 +56,7 @@
 
 - name: Configure Repmgr
   ansible.builtin.import_tasks: extensions/configure_repmgr.yml
-  when: postgresql_ext_install_repmgr and ansible_service_mgr == 'systemd'
+  when: postgresql_ext_install_repmgr and ansible_facts['service_mgr'] == 'systemd'
   tags: [postgresql, postgresql-extensions]
 
 - name: Check PostgreSQL version mismatch
