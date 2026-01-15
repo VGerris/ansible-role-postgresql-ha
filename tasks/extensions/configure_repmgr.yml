@@ -58,7 +58,7 @@
 
 - name: Repmgr | Generate an SSH keypair locally
   community.crypto.openssh_keypair:
-    path: "{{ lookup('config', 'DEFAULT_LOCAL_TMP') | dirname }}/postgres_id_rsa"
+    path: "{{ ansible_env.HOME }}/.ssh/postgres_id_rsa"
     backend: cryptography
     regenerate: partial_idempotence
     size: "{{ repmgr_ssh_key_bits }}"
@@ -70,11 +70,7 @@
 
 - name: Repmgr | Fetch pubkey content
   ansible.builtin.set_fact:
-    pubkey_content: "
-      {{ lookup(
-        'file',
-        lookup('config','DEFAULT_LOCAL_TMP') | dirname + '/postgres_id_rsa.pub'
-      ) }}"
+    pubkey_content: "{{ lookup('file', ansible_env.HOME + '/.ssh/postgres_id_rsa.pub') }}"
   become: no
   tags: ['skip_ansible_lint']
 
@@ -86,7 +82,7 @@
 
 - name: Repmgr | Upload private key on all nodes
   ansible.builtin.copy:
-    src: "{{ lookup('config', 'DEFAULT_LOCAL_TMP') | dirname }}/postgres_id_rsa"
+    src: "{{ ansible_env.HOME }}/.ssh/postgres_id_rsa"
     dest: "{{ repmgr_private_key_path }}"
     owner: "{{ postgresql_service_user }}"
     group: "{{ postgresql_service_group }}"
