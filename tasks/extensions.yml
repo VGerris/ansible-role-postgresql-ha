@@ -10,4 +10,4 @@
   when: postgresql_ext_install_postgis
 - name: Install Repmgr
   ansible.builtin.import_tasks: extensions/repmgr.yml
-  when: postgresql_ext_install_repmgr and ansible_service_mgr == 'systemd'
+  when: postgresql_ext_install_repmgr and ansible_facts['service_mgr'] == 'systemd'

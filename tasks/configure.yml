@@ -64,6 +64,7 @@
   become: true
   become_user: "{{ postgresql_service_user }}"
   when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed or postgresql_force_install
+  ignore_errors: true # TODO improve conditional on force install
 
 - name: PostgreSQL | Start PostgreSQL | Debian
   ansible.builtin.shell:
