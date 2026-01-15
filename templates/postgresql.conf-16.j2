@@ -308,7 +308,6 @@ synchronous_standby_names = '{{ postgresql_synchronous_standby_num_sync }}{% if 
 				# method to choose sync standbys, number of sync standbys,
 				# and comma-separated list of application_name
 				# from standby(s); '*' = all
-vacuum_defer_cleanup_age = {{ postgresql_vacuum_defer_cleanup_age }}	# number of xacts by which cleanup is delayed
 
 # - Standby Servers -
 
@@ -316,7 +315,6 @@ vacuum_defer_cleanup_age = {{ postgresql_vacuum_defer_cleanup_age }}	# number of
 
 primary_conninfo = '{{ postgresql_primary_conninfo }}'                  # connection string to sending server
 primary_slot_name = '{{ postgresql_primary_slot_name }}'                 # replication slot on sending server
-promote_trigger_file = '{{ postgresql_promote_trigger_file }}'              # file name whose presence ends recovery
 hot_standby = {{ 'on' if postgresql_hot_standby else 'off' }}			# "off" disallows queries during recovery
 					# (change requires restart)
 max_standby_archive_delay = {{ postgresql_max_standby_archive_delay }}	# max delay before canceling queries
@@ -412,7 +410,6 @@ cursor_tuple_fraction = {{ postgresql_cursor_tuple_fraction }}		# range 0.0-1.0
 from_collapse_limit = {{ postgresql_from_collapse_limit }}
 join_collapse_limit = {{ postgresql_join_collapse_limit }}		# 1 disables collapsing of explicit
 					# JOIN clauses
-force_parallel_mode = {{ 'on' if ( postgresql_force_parallel_mode | bool == true or postgresql_force_parallel_mode == 'on' ) else ( 'regress' if postgresql_force_parallel_mode == 'regress' else 'off' ) }}
 jit = {{ 'on' if postgresql_jit else 'off' }}				# allow JIT compilation
 plan_cache_mode = {{ postgresql_plan_cache_mode }}                 # auto, force_generic_plan or
                                         # force_custom_plan

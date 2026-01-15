@@ -319,7 +319,7 @@ postgresql_recovery_target_timeline: "latest"      # (>= 12)
 postgresql_recovery_target_action: "pause"         # (>= 12)
 postgresql_primary_conninfo: ""                    # (>= 12)
 postgresql_primary_slot_name: ""                   # (>= 12)
-postgresql_promote_trigger_file: ""                # (>= 12)
+postgresql_promote_trigger_file: ""                # (>= 12, <16)
 postgresql_recovery_min_apply_delay: 0             # (>= 12)
 
 #------------------------------------------------------------------------------
@@ -355,7 +355,6 @@ postgresql_synchronous_standby_names: [] # '*' means 'all'
 
 # number of xacts by which cleanup is delayed
 postgresql_vacuum_defer_cleanup_age: 0
-
 
 # - Standby Servers -
 
@@ -446,7 +445,7 @@ postgresql_constraint_exclusion:       "partition"  # on, off, or partition
 postgresql_cursor_tuple_fraction:      0.1          # range 0.0-1.0
 postgresql_from_collapse_limit:        8
 postgresql_join_collapse_limit:        8            # 1 disables collapsing of explicit
-postgresql_force_parallel_mode:        off          # on, off, regress (>= 9.6)
+postgresql_force_parallel_mode:        off          # on, off, regress (>= 9.6, 16)
 postgresql_jit:                        on           # (>= 11: off, 12: on)
 postgresql_plan_cache_mode:            "auto"       # (>= 12)
 
