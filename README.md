@@ -104,6 +104,7 @@ In order to exactly figure out the purpose and valid values for each of these va
         postgresql_version: 13
         postgresql_cluster_name: main
         postgresql_cluster_reset: false # TODO: Needs to be tested for repmgr
+        postgresql_force_install: false # DANGEROUS - force install
         postgresql_listen_addresses: "*"
         postgresql_port: 5432
         postgresql_wal_level: "replica"

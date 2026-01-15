@@ -43,13 +43,13 @@
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop
     executable: /bin/bash
   become_user: "{{ postgresql_service_user }}"
-  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
+  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed or postgresql_force_install
 
 - name: PostgreSQL | Reset the cluster - drop the existing one | Debian
   ansible.builtin.shell: pg_dropcluster {{ postgresql_version }} {{ postgresql_cluster_name }}
   become: true
   become_user: "{{ postgresql_service_user }}"
-  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
+  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed or postgresql_force_install
 
 - name: PostgreSQL | Reset the cluster - create a new one (with specified encoding and locale) | Debian
   ansible.builtin.shell: >
@@ -63,14 +63,14 @@
     {% if postgresql_wal_directory != "" and postgresql_version is version_compare('10', '>=') %}--waldir={{ postgresql_wal_directory }} {% endif %}
   become: true
   become_user: "{{ postgresql_service_user }}"
-  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
+  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed or postgresql_force_install
 
 - name: PostgreSQL | Start PostgreSQL | Debian
   ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
   become_user: "{{ postgresql_service_user }}"
-  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed
+  when: ansible_os_family == "Debian" and postgresql_cluster_reset and pgdata_dir_exist.changed or postgresql_force_install
 
 - name: PostgreSQL | Verify postgresql cluster version
   ansible.builtin.command: grep ^{{ postgresql_version }}$ {{ postgresql_data_directory }}/PG_VERSION
