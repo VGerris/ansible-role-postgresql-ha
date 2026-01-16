@@ -71,7 +71,7 @@
 
 - name: Repmgr | Fetch pubkey content
   ansible.builtin.set_fact:
-    pubkey_content: "{{ repmgr_base_key_path + '/postgres_id_rsa.pub') }}"
+    pubkey_content: "{{ repmgr_base_key_path + '/postgres_id_rsa.pub' }}"
   become: false
   tags: ['skip_ansible_lint']
 
