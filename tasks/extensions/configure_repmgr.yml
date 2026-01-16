@@ -46,7 +46,7 @@
     owner: "{{ postgresql_service_user }}"
     group: "{{ postgresql_service_group }}"
     mode: 0600
-    trim_blocks: no
+    trim_blocks: false
 
 - name: Repmgr | Ensure ssh keys destination folder exists
   ansible.builtin.file:
@@ -58,7 +58,7 @@
 
 - name: Repmgr | Generate an SSH keypair locally
   community.crypto.openssh_keypair:
-    path: "{{ ansible_env.HOME }}/.ssh/postgres_id_rsa"
+    path: "{{ repmgr_base_key_path }}/postgres_id_rsa"
     backend: cryptography
     regenerate: partial_idempotence
     size: "{{ repmgr_ssh_key_bits }}"
@@ -66,12 +66,12 @@
     force: "{{ repmgr_ssh_force_renewal }}"
     mode: 0644
   delegate_to: 127.0.0.1
-  become: no
+  become: false
 
 - name: Repmgr | Fetch pubkey content
   ansible.builtin.set_fact:
-    pubkey_content: "{{ lookup('file', ansible_env.HOME + '/.ssh/postgres_id_rsa.pub') }}"
-  become: no
+    pubkey_content: "{{ repmgr_base_key_path + '/postgres_id_rsa.pub') }}"
+  become: false
   tags: ['skip_ansible_lint']
 
 - name: Repmgr | Update authorized_keys on all nodes
@@ -82,7 +82,7 @@
 
 - name: Repmgr | Upload private key on all nodes
   ansible.builtin.copy:
-    src: "{{ ansible_env.HOME }}/.ssh/postgres_id_rsa"
+    src: "{{ repmgr_base_key_path }}/postgres_id_rsa"
     dest: "{{ repmgr_private_key_path }}"
     owner: "{{ postgresql_service_user }}"
     group: "{{ postgresql_service_group }}"
@@ -168,7 +168,7 @@
       sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman switch-xlog --force --archive {{ repmgr_primary_hostname }}'
       sudo -u postgres bash -c 'ssh barman@192.168.56.20 barman backup {{ repmgr_primary_hostname }} --wait'
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: root
   when: inventory_hostname == repmgr_primary_hostname and should_barman_xlog_run.rc not in [0, 2]
 
@@ -180,13 +180,13 @@
       sudo -u postgres bash -c 'scp barman@192.168.56.20:~/.ssh/id_rsa.pub /var/lib/postgresql/.ssh/barman_id_rsa.pub'
       sudo -u postgres bash -c 'cat /var/lib/postgresql/.ssh/barman_id_rsa.pub >> /var/lib/postgresql/.ssh/authorized_keys'
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: root # "{{ postgresql_service_user }}"
   #when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Register as primary
   ansible.builtin.command: "repmgr primary register -F"
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname == repmgr_primary_hostname
 
@@ -194,13 +194,13 @@
   ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} stop
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Clone standby
   ansible.builtin.command: "repmgr -F -h {{ repmgr_primary_hostname }} -U repmgr -d repmgr standby clone"
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
@@ -208,7 +208,7 @@
   ansible.builtin.shell:
     cmd: pg_ctlcluster {{ postgresql_version }} {{ postgresql_cluster_name }} start
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
@@ -219,26 +219,26 @@
 
 - name: Repmgr | Register standby
   ansible.builtin.command: "repmgr -F -h {{ repmgr_primary_hostname }} -U repmgr -d repmgr standby register"
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
 - name: Repmgr | Verify cluster functionality
   ansible.builtin.command: "repmgr -F -h {{ repmgr_primary_hostname }} -U repmgr -d repmgr cluster crosscheck"
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
 
 - name: Repmgr | Ensure repmgrd is running
   ansible.builtin.command: "/usr/bin/repmgrd daemon start"
   when: repmgr_monitoring_history or repmgr_failover == 'automatic'
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
 
 - name: Repmgr | Show repmgrd status
   ansible.builtin.command: "repmgr daemon status"
   register: repmgrd_status
   when: repmgr_monitoring_history or repmgr_failover == 'automatic'
-  become: yes
+  become: true
   become_user: "{{ postgresql_service_user }}"
 
 - name: Debug repmgrd status
@@ -263,7 +263,7 @@
       sudo -u postgres bash -c "ssh barman@192.168.56.20 barman switch-xlog --force --archive {{ inventory_hostname }}" || echo "Fails if standby"
       sudo -u postgres bash -c "ssh barman@192.168.56.20 barman backup {{ inventory_hostname }} --wait" || echo "Fails if empty"
     executable: /bin/bash
-  become: yes
+  become: true
   become_user: root # "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname and should_barman_xlog_run.rc not in [0, 2]
 
