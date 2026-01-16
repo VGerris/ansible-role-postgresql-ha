@@ -215,6 +215,15 @@
   failed_when: false
   when: inventory_hostname != repmgr_primary_hostname
 
+- name: Repmgr | Recreate PosgreSQL cluster metadata (no initdb)
+  ansible.builtin.command: >
+    pg_createcluster
+    --start-conf=manual
+    --datadir {{ postgresql_data_directory }}
+    16 main
+  become: true
+  when: inventory_hostname != repmgr_primary_hostname
+
 - name: Repmgr | Clone standby
   ansible.builtin.command: "repmgr -F -h {{ repmgr_primary_hostname }} -U repmgr -d repmgr standby clone"
   become: true
