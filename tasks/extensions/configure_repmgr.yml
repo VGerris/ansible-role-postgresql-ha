@@ -95,6 +95,7 @@
     owner: "{{ postgresql_service_user }}"
     group: "{{ postgresql_service_group }}"
     mode: 0600
+    remote_src: true
 
 - name: Repmgr | Setup SSH config for Barman
   ansible.builtin.template:
@@ -103,7 +104,9 @@
     owner: "{{ postgresql_service_user }}"
     group: "{{ postgresql_service_group }}"
     mode: 0600
-  when: repmgr_barman_host and repmgr_barman_server
+  when: repmgr_barman_host is defined and repmgr_barman_host != "" and
+      repmgr_barman_server is defined and repmgr_barman_server != ""
+
 
 - name: Determine repmgr primary hostname
   ansible.builtin.set_fact:
