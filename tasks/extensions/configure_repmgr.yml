@@ -66,7 +66,8 @@
     force: "{{ repmgr_ssh_force_renewal }}"
     mode: 0644
   # delegate_to: 127.0.0.1
-  become: false
+  become: true
+  become_user: postgres
 
 - name: Repmgr | Fetch pubkey content
   ansible.builtin.set_fact:
