@@ -69,11 +69,18 @@
   become: true
   become_user: postgres
 
-- name: Repmgr | Fetch pubkey content
-  ansible.builtin.set_fact:
-    pubkey_content: "{{ repmgr_base_key_path + '/postgres_id_rsa.pub' }}"
-  become: false
+- name: Repmgr | Fetch pubkey content from remote host
+  ansible.builtin.slurp:
+    src: "{{ repmgr_base_key_path }}/postgres_id_rsa.pub"
+  register: slurped_pubkey
+  become: true
+  become_user: postgres
+
   tags: ['skip_ansible_lint']
+
+- name: Repmgr | Decode remote public key
+  ansible.builtin.set_fact:
+    pubkey_content: "{{ slurped_pubkey.content | b64decode }}"
 
 - name: Repmgr | Update authorized_keys on all nodes
   ansible.posix.authorized_key:
