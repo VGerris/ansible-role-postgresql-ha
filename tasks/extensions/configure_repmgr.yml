@@ -209,6 +209,12 @@
   become_user: "{{ postgresql_service_user }}"
   when: inventory_hostname != repmgr_primary_hostname
 
+- name: Repmgr | Drop PostgreSQL cluster on standby (Debian mandatory)
+  ansible.builtin.command: pg_dropcluster --stop {{ postgresql_version }} {{ postgresql_cluster_name }}
+  become: true
+  failed_when: false
+  when: inventory_hostname != repmgr_primary_hostname
+
 - name: Repmgr | Clone standby
   ansible.builtin.command: "repmgr -F -h {{ repmgr_primary_hostname }} -U repmgr -d repmgr standby clone"
   become: true
